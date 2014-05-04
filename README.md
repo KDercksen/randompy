@@ -37,6 +37,8 @@ The file contains an API key, but you should replace it with your own; these
 keys have a limited use per day, and every user/application should have its
 own key according to the random.org [API usage guidelines](https://api.random.org/guidelines).
 
+You can get your own key [here](https://api.random.org/api-keys/beta)!
+
 ###Todo
 I aim to implement full use of the API (so support for strings, blobs, signed
 stuff etc. is coming).
