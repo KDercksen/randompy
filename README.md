@@ -4,7 +4,14 @@ RandomPy
 It is designed for use as a small utility and its output can easily piped into
 other applications or files.
 
-##Examples
+The most useful thing to do is to put the script in your path and use it
+that way.
+
+####Dependencies
+* Python 3.x (tested on 3.4)
+* no other third parties modules, just standard library stuff
+
+###Examples
 Generate a random integer between 0 and 100:
 ```
 $ python randompy.py integers -m 0 -M 100
@@ -28,7 +35,7 @@ $ python randompy.py decimals -n 10 -d 8
 
 The file contains an API key, but you should replace it with your own; these
 keys have a limited use per day, and every user/application should have its
-own key according to the random.org [API usage guidelines](https://api.random.org/guidelines)
+own key according to the random.org [API usage guidelines](https://api.random.org/guidelines).
 
 ###Todo
 I aim to implement full use of the API (so support for strings, blobs, signed
