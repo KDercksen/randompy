@@ -17,6 +17,8 @@ URL = "https://api.random.org/json-rpc/1/invoke"
 METHODS = {
     "integers": "generateIntegers",
     "decimals": "generateDecimalFractions"
+    "gaussians": "generateGaussians",
+    "strings": "generateStrings"
     }
 
 
@@ -85,27 +87,57 @@ if __name__ == "__main__":
     # Add subparsers for the different methods.
     parser_int = subparsers.add_parser("integers")
     parser_dec = subparsers.add_parser("decimals")
+    parser_gau = subparsers.add_parser("gaussians")
+    parser_str = subparsers.add_parser("strings")
 
-    # Add initial arguments (TODO: expand upon these)
-    parser_int.add_argument("-n", "--number", type=int, default=1,
-                            help="number of randoms to generate")
+    # Every subparser needs this argument so it's for the parent parser.
+    parser.add_argument("-n", "--number", type=int, choices=range(1, 1001),
+                        default=1, help="number of randoms to generate")
+
+    # Add integer arguments
     parser_int.add_argument("-m", "--minimum", type=int, required=True,
+                            choices=range(-1000000000, 1000000000),
                             help="minimum of random numbers")
     parser_int.add_argument("-M", "--maximum", type=int, required=True,
+                            choices=range(-1000000000, 1000000000),
                             help="maximum of random numbers")
+    parser_int.add_argument("-r", "--replacement", action="store_false",
+                            default=True, help="pick without replacement")
+    parser_int.add_argument("-b", "--base", type=int, default=10,
+                            help="base to display numbers in")
     parser_int.set_defaults(which="integers")
 
-    parser_dec.add_argument("-n", "--number", type=int, default=1,
-                            help="number of randoms to generate")
+    # Add decimal fraction arguments
     parser_dec.add_argument("-d", "--decimals", type=int, default=2,
+                            choices=range(1, 21),
                             help="number of decimal places")
+    parser_dec.add_argument("-r", "--replacement", action="store_false",
+                            default=True, help="pick without replacement")
     parser_dec.set_defaults(which="decimals")
+
+    # Add gaussian arguments
+    parser_gau.add_argument("-m", "--mean", type=float, required=True,
+                            help="the mean of the distribution")
+    parser_gau.add_argument("-s", "--stddev", type=float, required=True,
+                            help="the standard deviation of the distribution")
+    parser_gau.add_argument("-d", "--significant", type=int, required=True,
+                            choices=range(2, 21), help="significant digits")
+    parser_gau.set_defaults(which="gaussians")
+
+    # Add string arguments
+    parser_str.add_argument("-l", "--length", type=int, choices=range(1, 21),
+                            required=True, help="length of strings")
+    parser_str.add_argument("-c", "--characters", required=True, type=str,
+                            help="allowed alphabet (max length 80)")
+    parser_str.add_argument("-r", "--replacement", action="store_false",
+                            default=True, help="pick without replacement")
+    parser_str.set_defaults(which="strings")
 
     args = parser.parse_args()
 
-    # If subparser was supplied, call function; else print help
-    if len(sys.argv) == 1:
+    # If subparser was not supplied, print help; else call main
+    if any(k in sys.argv for k in METHODS.keys()):
+        main(args)
+    else:
         parser.print_help()
         sys.exit(2)
-    else:
-        main(args)
