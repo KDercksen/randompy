@@ -70,8 +70,7 @@ def build_request(args):
         data["params"]["standardDeviation"] = args.stddev
         data["params"]["significantDigits"] = args.significant
     elif args.which == "strings":
-        # Hack to make sure the alphabets are always passed as a list
-        alphas = [args.chars] if type(args.chars) is str else set(args.chars)
+        alphas = set(args.chars)
         data["params"]["length"] = args.length
         data["params"]["characters"] = "".join(ABCS[c] for c in alphas)
     return data
@@ -162,7 +161,7 @@ if __name__ == "__main__":
     parser_str.add_argument("-l", "--length", type=int, choices=range(1, 21),
                             default=8, help="length of strings", metavar="N")
     parser_str.add_argument("-c", "--chars", metavar="string", nargs="+",
-                            choices=ABCS.keys(), type=str, default="lower",
+                            choices=ABCS.keys(), type=str, default=["lower"],
                             help="allowed alphabet (max length 80)")
     parser_str.add_argument("-r", "--replacement", action="store_false",
                             default=True, help="pick without replacement")
