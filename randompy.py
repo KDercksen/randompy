@@ -71,7 +71,7 @@ def build_request(args):
         data["params"]["significantDigits"] = args.significant
     elif args.which == "strings":
         # Hack to make sure the alphabets are always passed as a list
-        alphas = [args.chars] if type(args.chars) is str else args.chars
+        alphas = [args.chars] if type(args.chars) is str else set(args.chars)
         data["params"]["length"] = args.length
         data["params"]["characters"] = "".join(ABCS[c] for c in alphas)
     return data
