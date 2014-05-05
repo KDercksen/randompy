@@ -4,6 +4,7 @@
 import argparse
 import json
 import urllib.request as ureq
+import string
 import sys
 
 
@@ -16,9 +17,22 @@ URL = "https://api.random.org/json-rpc/1/invoke"
 # Supported methods and related subparsers
 METHODS = {
     "integers": "generateIntegers",
-    "decimals": "generateDecimalFractions"
+    "decimals": "generateDecimalFractions",
     "gaussians": "generateGaussians",
     "strings": "generateStrings"
+    }
+
+# Default alphabets
+ABCS = {
+    "lower": string.ascii_lowercase,
+    "upper": string.ascii_uppercase,
+    "letters": string.ascii_letters,
+    "digits": string.digits,
+    "hexdigits": string.hexdigits,
+    "octdigits": string.octdigits,
+    "punctuation": string.punctuation,
+    "printable": string.printable,
+    "whitespace": string.whitespace
     }
 
 
@@ -40,11 +54,26 @@ def build_request(args):
             "n": args.number
             }
         }
+    # Applies for everything except gaussians
+    if args.which != "gaussians":
+        data["params"]["replacement"] = args.replacement
+
+    # Handle the rest
     if args.which == "integers":
         data["params"]["min"] = args.minimum
         data["params"]["max"] = args.maximum
+        data["params"]["base"] = args.base
     elif args.which == "decimals":
         data["params"]["decimalPlaces"] = args.decimals
+    elif args.which == "gaussians":
+        data["params"]["mean"] = args.mean
+        data["params"]["standardDeviation"] = args.stddev
+        data["params"]["significantDigits"] = args.significant
+    elif args.which == "strings":
+        # Hack to make sure the alphabets are always passed as a list
+        alphas = [args.chars] if type(args.chars) is str else args.chars
+        data["params"]["length"] = args.length
+        data["params"]["characters"] = "".join(ABCS[c] for c in alphas)
     return data
 
 
@@ -76,8 +105,14 @@ def main(args):
         argparse module.
     """
     data = query(build_request(args))
-    result = list(data["result"]["random"]["data"])
-    print("\n".join(map(str, result)))
+    try:
+        result = list(data["result"]["random"]["data"])
+        print("\n".join(map(str, result)))
+    except:
+        if "error" in data:
+            message = data["error"]["message"]
+        sys.stderr.write("Something went wrong!")
+        sys.stderr.write("Message: {}".format(message))
 
 
 if __name__ == "__main__":
@@ -91,43 +126,43 @@ if __name__ == "__main__":
     parser_str = subparsers.add_parser("strings")
 
     # Every subparser needs this argument so it's for the parent parser.
-    parser.add_argument("-n", "--number", type=int, choices=range(1, 1001),
-                        default=1, help="number of randoms to generate")
+    parser.add_argument("-n", "--number", type=int, default=1,
+                        help="number of randoms to generate (range 1:1000)")
 
     # Add integer arguments
-    parser_int.add_argument("-m", "--minimum", type=int, required=True,
-                            choices=range(-1000000000, 1000000000),
-                            help="minimum of random numbers")
-    parser_int.add_argument("-M", "--maximum", type=int, required=True,
-                            choices=range(-1000000000, 1000000000),
-                            help="maximum of random numbers")
+    parser_int.add_argument("-m", "--minimum", type=int, default=0,
+                            help="minimum of random numbers (range -1e9:1e9)")
+    parser_int.add_argument("-M", "--maximum", type=int, default=100,
+                            help="maximum of random numbers (range -1e9:1e9)")
     parser_int.add_argument("-r", "--replacement", action="store_false",
                             default=True, help="pick without replacement")
-    parser_int.add_argument("-b", "--base", type=int, default=10,
-                            help="base to display numbers in")
+    parser_int.add_argument("-b", "--base", type=int, choices=[2, 8, 10, 16],
+                            default=10, help="base to display numbers in")
     parser_int.set_defaults(which="integers")
 
     # Add decimal fraction arguments
     parser_dec.add_argument("-d", "--decimals", type=int, default=2,
-                            choices=range(1, 21),
+                            choices=range(1, 21), metavar="N",
                             help="number of decimal places")
     parser_dec.add_argument("-r", "--replacement", action="store_false",
                             default=True, help="pick without replacement")
     parser_dec.set_defaults(which="decimals")
 
     # Add gaussian arguments
-    parser_gau.add_argument("-m", "--mean", type=float, required=True,
+    parser_gau.add_argument("-m", "--mean", type=float, default=20.0,
                             help="the mean of the distribution")
-    parser_gau.add_argument("-s", "--stddev", type=float, required=True,
+    parser_gau.add_argument("-s", "--stddev", type=float, default=2.0,
                             help="the standard deviation of the distribution")
-    parser_gau.add_argument("-d", "--significant", type=int, required=True,
-                            choices=range(2, 21), help="significant digits")
+    parser_gau.add_argument("-d", "--significant", type=int, default=2,
+                            choices=range(2, 21), help="significant digits",
+                            metavar="N")
     parser_gau.set_defaults(which="gaussians")
 
     # Add string arguments
     parser_str.add_argument("-l", "--length", type=int, choices=range(1, 21),
-                            required=True, help="length of strings")
-    parser_str.add_argument("-c", "--characters", required=True, type=str,
+                            default=8, help="length of strings", metavar="N")
+    parser_str.add_argument("-c", "--chars", metavar="string", nargs="+",
+                            choices=ABCS.keys(), type=str, default="lower",
                             help="allowed alphabet (max length 80)")
     parser_str.add_argument("-r", "--replacement", action="store_false",
                             default=True, help="pick without replacement")
