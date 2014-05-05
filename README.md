@@ -15,22 +15,27 @@ that way.
 Generate a random integer between 0 and 100:
 ```
 $ python randompy.py integers -m 0 -M 100
-59
 ```
 
 Generate 10 random decimals with 8 decimal places:
 ```
-$ python randompy.py decimals -n 10 -d 8
-0.65466723
-0.28385892
-0.02867834
-0.26050413
-0.80495891
-0.95120194
-0.0423827
-0.05744396
-0.42540818
-0.94061231
+$ python randompy.py -n 10 decimals -d 8
+```
+
+Generate 5 random strings consisting of lowercase ascii characters and digits:
+```
+$ python randompy.py -n 10 strings -c lower digits
+```
+
+Generate 100 numbers from a Gaussian distribution with mean 14 and standard-
+deviation 0.5 and 15 significant digits:
+```
+$ python randompy.py -n 100 gaussians -m 14 -s 0.5 -d 15
+```
+
+Get help on the integer subparser:
+```
+$ python randompy.py integers -h
 ```
 
 The file contains an API key, but you should replace it with your own; these
@@ -40,5 +45,6 @@ own key according to the random.org [API usage guidelines](https://api.random.or
 You can get your own key [here](https://api.random.org/api-keys/beta)!
 
 ###Todo
-I aim to implement full use of the API (so support for strings, blobs, signed
-stuff etc. is coming).
+I aim to implement full use of the API. Currently generation of integers,
+decimal fractions, gaussians and strings is supported.
+The rest will come! 
