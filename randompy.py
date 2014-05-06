@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 # Module to interface with the random.org JSON-RPC interface.
+# Config file is assumed to be ~/.randompy, but you can change this.
 
 import argparse
 import json
+import os.path
 import urllib.request as ureq
 import string
 import sys
 
 
 # API key to use in the requests (replace with your own)
-API = "0af6cd33-6cc0-4939-9792-3e2d1f990e51"
+API_PATH = "~/.randompy"
 
 # API invocation URL
 URL = "https://api.random.org/json-rpc/1/invoke"
@@ -36,6 +38,21 @@ ABCS = {
     }
 
 
+def get_api():
+    """Get the API key from a config file.    
+    """
+    path = os.path.expanduser(API_PATH)
+    if not os.path.isfile(path) or not os.path.exists(path):
+        sys.stderr.write("Incorrect config file path specified!")
+        sys.exit(2)
+    with open(path) as f:
+        api = f.readline()
+        if not api:
+            sys.stderr.write("No API entered in {}".format(API_PATH))
+            sys.exit(2)
+        return api.strip()
+
+
 def build_request(args):
     """Build a request dictionary that can immediately be dumped to JSON.
 
@@ -45,12 +62,13 @@ def build_request(args):
         The commandline arguments as parsed by the ArgumentParser from the
         argparse module.
     """
+    api = get_api()
     data = {
         "jsonrpc": "2.0",
         "method": METHODS[args.which],
         "id": 1337,
         "params": {
-            "apiKey": API,
+            "apiKey": api,
             "n": args.number
             }
         }
