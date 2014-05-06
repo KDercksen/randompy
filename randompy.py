@@ -9,7 +9,7 @@ import sys
 
 
 # API key to use in the requests (replace with your own)
-API = "0af6cd33-6cc0-4939-9792-3e2d1f990e51"
+API = ""
 
 # API invocation URL
 URL = "https://api.random.org/json-rpc/1/invoke"
