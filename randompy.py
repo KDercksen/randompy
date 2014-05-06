@@ -43,14 +43,15 @@ def get_api():
     """
     path = os.path.expanduser(API_PATH)
     if not os.path.isfile(path) or not os.path.exists(path):
-        sys.stderr.write("Incorrect config file path specified!")
+        sys.stderr.write("Incorrect config file path specified!\n")
+        sys.stderr.write("Does your config file exist?\n")
         sys.exit(2)
     with open(path) as f:
-        api = f.readline()
+        api = f.readline().strip()
         if not api:
-            sys.stderr.write("No API entered in {}".format(API_PATH))
+            sys.stderr.write("No API entered in {}\n".format(API_PATH))
             sys.exit(2)
-        return api.strip()
+        return api
 
 
 def build_request(args):
