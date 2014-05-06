@@ -10,7 +10,7 @@ import string
 import sys
 
 
-# API key to use in the requests (replace with your own)
+# API file path
 API_PATH = "~/.randompy"
 
 # API invocation URL
@@ -129,8 +129,8 @@ def main(args):
     except:
         if "error" in data:
             message = data["error"]["message"]
-        sys.stderr.write("Something went wrong!")
-        sys.stderr.write("Message: {}".format(message))
+        sys.stderr.write("Something went wrong!\n")
+        sys.stderr.write("Message: {}\n".format(message))
 
 
 if __name__ == "__main__":
