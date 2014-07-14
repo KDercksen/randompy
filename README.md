@@ -16,9 +16,7 @@ the first line without extra text). You can alter the config file path inside
 *randompy.py*.
 
 Example config file (yeah... that easy):
-```
-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-```
+	XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 
 These API keys have a limited use per day, and every user/application should have its
 own key according to the random.org [API usage guidelines](https://api.random.org/guidelines).
