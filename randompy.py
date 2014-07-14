@@ -8,10 +8,15 @@ import os.path
 import urllib.request as ureq
 import string
 import sys
+import re
 
 
 # API file path
 API_PATH = "~/.randompy"
+
+# API format
+API_FORMAT = re.compile(
+    "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", re.I)
 
 # API invocation URL
 URL = "https://api.random.org/json-rpc/1/invoke"
@@ -38,20 +43,33 @@ ABCS = {
     }
 
 
-def get_api():
-    """Get the API key from a config file.    
+def get_api(args):
+    """Get the API key from a config file or if given from the command line
+    arguments
+
+    Arguments:
+    ----------
+    args: namespace object
+        The commandline arguments as parsed, used to choose either config file
+        or command line option for the api key retrieval.
     """
-    path = os.path.expanduser(API_PATH)
-    if not os.path.isfile(path) or not os.path.exists(path):
-        sys.stderr.write("Incorrect config file path specified!\n")
-        sys.stderr.write("Does your config file exist?\n")
-        sys.exit(2)
-    with open(path) as f:
-        api = f.readline().strip()
-        if not api:
-            sys.stderr.write("No API entered in {}\n".format(API_PATH))
+    if not args.api_key:
+        path = os.path.expanduser(API_PATH)
+        if not os.path.isfile(path) or not os.path.exists(path):
+            sys.stderr.write("Incorrect config file path specified!\n")
+            sys.stderr.write("Does your config file exist?\n")
             sys.exit(2)
-        return api
+        with open(path) as f:
+            api = f.readline().strip()
+    else:
+        api = args.api_key
+    if not api or not API_FORMAT.match(api):
+        sys.stderr.write("Incorrect or no api key\n")
+        sys.stderr.write("Required format:\n")
+        sys.stderr.write("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX, ")
+        sys.stderr.write("where X is a hexadecimal\n")
+        sys.exit(2)
+    return api.lower()
 
 
 def build_request(args):
@@ -63,7 +81,7 @@ def build_request(args):
         The commandline arguments as parsed by the ArgumentParser from the
         argparse module.
     """
-    api = get_api()
+    api = get_api(args)
     data = {
         "jsonrpc": "2.0",
         "method": METHODS[args.which],
@@ -146,6 +164,8 @@ if __name__ == "__main__":
     # Every subparser needs this argument so it's for the parent parser.
     parser.add_argument("-n", "--number", type=int, default=1,
                         help="number of randoms to generate (range 1:1000)")
+    parser.add_argument("-a", "--api-key", type=str, default="",
+                        help="fixed api key, this overrides any config file")
 
     # Add integer arguments
     parser_int.add_argument("-m", "--minimum", type=int, default=0,

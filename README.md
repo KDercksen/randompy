@@ -11,9 +11,9 @@ The most useful thing to do is to put the script in your path and use it that wa
 * no other third parties modules, just standard library stuff
 
 ###Examples
-
-First you should get yourself an API key and put it in ```~/.randompy``` (on the 
-first line without extra text). You can alter the config file path inside *randompy.py*.
+First you should get yourself an API key and put it in ```~/.randompy``` (on
+the first line without extra text). You can alter the config file path inside
+*randompy.py*.
 
 Example config file (yeah... that easy):
 ```
@@ -24,6 +24,9 @@ These API keys have a limited use per day, and every user/application should hav
 own key according to the random.org [API usage guidelines](https://api.random.org/guidelines).
 
 You can get your own key [here!](https://api.random.org/api-keys/beta)
+
+Note, if you don't want to save your api key on your disk you can also supply
+it by command line argument via the ```--api-key``` or ```-a``` option.
 
 Generate a random integer between 0 and 100:
 ```
@@ -52,6 +55,6 @@ $ python randompy.py integers -h
 ```
 
 ###Todo
-I aim to implement full use of the API. Currently generation of integers,
-decimal fractions, gaussians and strings is supported.
-The rest will come! 
+- Implement full api
+- Command line option for specifying config path
+- Installation via distutils
