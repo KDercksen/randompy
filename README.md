@@ -16,10 +16,13 @@ the first line without extra text). You can alter the config file path inside
 *randompy.py*.
 
 Example config file (yeah... that easy):
-	XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+```
+abcdef01-2345-6789-abcd-ef0123456789
+```
 
-These API keys have a limited use per day, and every user/application should have its
-own key according to the random.org [API usage guidelines](https://api.random.org/guidelines).
+These API keys have a limited use per day, and every user/application should
+have its own key according to the random.org
+[API usage guidelines](https://api.random.org/guidelines).
 
 You can get your own key [here!](https://api.random.org/api-keys/beta)
 
