@@ -6,14 +6,7 @@ import randompy
 def test_check_constraints_integers_correct():
     method = 'integers'
     # correct
-    req = {
-        'params': {
-            'n': 100,
-            'min': 0,
-            'max': 100,
-            'base': 10,
-        },
-    }
+    req = {'params': {'n': 100, 'min': 0, 'max': 100, 'base': 10}}
     assert randompy.check_constraints(method, req)
 
 
