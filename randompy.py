@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 from io import StringIO
 from random import randint
@@ -26,6 +27,7 @@ METHODS = {
 }
 
 
+# Request keys
 KEYS = {
     'integers': ('min', 'max', 'replacement', 'base'),
     'decimals': ('decimalPlaces', 'replacement'),
@@ -37,6 +39,7 @@ KEYS = {
 }
 
 
+# Value constraints
 CONSTRAINTS = {
     'integers': {
         'n': lambda x: x >= 1 and x <= 1e4,
@@ -84,6 +87,7 @@ ABCS = {
 }
 
 
+# Allowed blob format types
 BLOB_FORMATS = [
     'base64',
     'hex',
@@ -91,12 +95,21 @@ BLOB_FORMATS = [
 
 
 def check_constraints(method, req):
+    '''Check if all values in req satisfy the method constraints.'''
     funcs = CONSTRAINTS[method]
     params = req['params']
     return all(funcs[p](params[p]) for p in params if p in funcs)
 
 
 def build_request(key, **kwargs):
+    '''Build a request for random.org.
+
+    Arguments:
+        key: API key
+        kwargs: should contain method and corresponding necessary values
+                (see KEYS global var). When method != verify, 'number' should
+                also be supplied.
+    '''
     rid = randint(0, 99999)
     r = {
         'jsonrpc': 2.0,
@@ -126,6 +139,9 @@ def build_request(key, **kwargs):
 
 
 def verify(config, data, sign):
+    '''Verify a random.org response given its random field (data) and
+    signature.
+    '''
     key = config['config']['key']
     url = config['config']['url']
     rid, req = build_request(key, which='verify', random=data, signature=sign)
@@ -142,6 +158,7 @@ def verify(config, data, sign):
 
 
 def handle_error(resp):
+    '''Default CLI error output.'''
     error = resp['error']
     msg = StringIO()
     msg.write('Error code: {}\n'.format(error['code']))
@@ -157,6 +174,7 @@ def handle_error(resp):
 
 
 def handle_result(resp):
+    '''Default CLI succesful result output.'''
     data = resp['result']['random']['data']
     msg = StringIO()
     msg.write('\n'.join(map(str, data)))
@@ -166,6 +184,7 @@ def handle_result(resp):
 
 
 def handle_response(resp, errorfunc, successfunc):
+    '''Call error/success function according to response content.'''
     if 'error' in resp:
         output = errorfunc(resp)
     else:
@@ -174,6 +193,7 @@ def handle_response(resp, errorfunc, successfunc):
 
 
 def handle(config, **kwargs):
+    '''Handle CLI request.'''
     if 'key' not in config['config']:
         raise Exception('No API key found in config!')
 
@@ -196,6 +216,7 @@ def handle(config, **kwargs):
 
 
 def get_config():
+    '''Load default + user configurations.'''
     config = configparser.ConfigParser()
     config.read('defaults.ini')
     try:
@@ -206,6 +227,7 @@ def get_config():
 
 
 def main():
+    '''Console script entrypoint.'''
     config = get_config()
     parser = argparse.ArgumentParser(description='Get random numbers!')
     subparsers = parser.add_subparsers()
