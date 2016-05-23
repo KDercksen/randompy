@@ -48,7 +48,7 @@ CONSTRAINTS = {
         'n': lambda x: x >= 1 and x <= 1e4,
         'decimalPlaces': lambda x: x >= 1 and x <= 20,
     },
-    'gaussian': {
+    'gaussians': {
         'n': lambda x: x >= 1 and x <= 1e4,
         'mean': lambda x: x >= -1e6 and x <= 1e6,
         'standardDeviation': lambda x: x >= -1e6 and x <= 1e6,
