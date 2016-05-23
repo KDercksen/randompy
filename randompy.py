@@ -33,6 +33,40 @@ KEYS = {
     'verify': ('random', 'signature'),
 }
 
+
+CONSTRAINTS = {
+    'integers': {
+        'n': lambda x: x >= 1 and x <= 1e4,
+        'min': lambda x: x >= -1e9 and x <= 1e9,
+        'max': lambda x: x >= -1e9 and x <= 1e9,
+        'base': lambda x: x in [2, 8, 10, 12],
+    },
+    'decimals': {
+        'n': lambda x: x >= 1 and x <= 1e4,
+        'decimalPlaces': lambda x: x >= 1 and x <= 20,
+    },
+    'gaussian': {
+        'n': lambda x: x >= 1 and x <= 1e4,
+        'mean': lambda x: x >= -1e6 and x <= 1e6,
+        'standardDeviation': lambda x: x >= -1e6 and x <= 1e6,
+        'significantDigits': lambda x: x >= 2 and x <= 20,
+    },
+    'strings': {
+        'n': lambda x: x >= 1 and x <= 1e4,
+        'length': lambda x: x >= 1 and x <= 20,
+        'characters': lambda x: len(x) >= 1 and len(x) <= 80,
+    },
+    'uuids': {
+        'n': lambda x: x >= 1 and x <= 1e3,
+    },
+    'blobs': {
+        'n': lambda x: x >= 1 and x <= 100,
+        'size': lambda x: x >= 1 and x <= 1048576 and x % 8 == 0,
+        'format': lambda x: x in BLOB_FORMATS,
+    },
+}
+
+
 # Default alphabets
 ABCS = {
     'lower': string.ascii_lowercase,
@@ -46,10 +80,17 @@ ABCS = {
     'whitespace': string.whitespace
 }
 
+
 BLOB_FORMATS = [
     'base64',
     'hex',
 ]
+
+
+def check_constraints(method, req):
+    funcs = CONSTRAINTS[method]
+    params = req['params']
+    return all(funcs[p](params[p]) for p in params if p in funcs)
 
 
 def build_request(key, **kwargs):
@@ -66,6 +107,17 @@ def build_request(key, **kwargs):
 
     for k in KEYS[kwargs['which']]:
         r['params'][k] = kwargs[k]
+
+    # fix character field in case of strings
+    if kwargs['which'] == 'strings':
+        s = ''.join(ABCS[c] for c in kwargs['characters'])
+        r['params']['characters'] = s
+
+    # check request constraints
+    if kwargs['which'] != 'verify':
+        valid = check_constraints(kwargs['which'], r)
+        if not valid:
+            raise Exception('One or more argument constraints violated!')
 
     return rid, json.dumps(r)
 
@@ -163,7 +215,7 @@ if __name__ == '__main__':
     number = int(config['root']['number'])
 
     parser.add_argument('-n', '--number', type=int, default=number,
-                        help='number of randoms to generate (range 1:1000)')
+                        help='number of randoms to generate')
 
     # Add integer arguments
     integer = config['integer']
@@ -173,14 +225,14 @@ if __name__ == '__main__':
     base = int(integer['base'])
 
     parser_int.add_argument('-m', '--min', type=int, default=minimum,
-                            help='minimum of random numbers (range -1e9:1e9)')
+                            help='minimum of random numbers (-1e9-1e9)')
     parser_int.add_argument('-M', '--max', type=int, default=maximum,
-                            help='maximum of random numbers (range -1e9:1e9)')
+                            help='maximum of random numbers (-1e9-1e9)')
     parser_int.add_argument('-r', '--replacement', action='store_false',
-                            default=replacement,
-                            help='pick without replacement')
-    parser_int.add_argument('-b', '--base', type=int, choices=[2, 8, 10, 16],
-                            default=base, help='base to display numbers in')
+                            help='pick without replacement',
+                            default=replacement)
+    parser_int.add_argument('-b', '--base', type=int, default=base,
+                            help='base to display numbers in (2, 8, 10, 12)')
     parser_int.set_defaults(which='integers')
 
     # Add decimal fraction arguments
@@ -189,8 +241,8 @@ if __name__ == '__main__':
     replacement = config.getboolean('decimal', 'replacement')
 
     parser_dec.add_argument('-d', '--decimalPlaces', type=int, default=decs,
-                            choices=range(1, 21), metavar='N',
-                            help='number of decimal places')
+                            help='number of decimal places (1-20)',
+                            metavar='N')
     parser_dec.add_argument('-r', '--replacement', action='store_false',
                             default=replacement,
                             help='pick without replacement')
@@ -203,13 +255,14 @@ if __name__ == '__main__':
     significant = int(gaussian['significantDigits'])
 
     parser_gau.add_argument('-m', '--mean', type=float, default=mean,
-                            help='the mean of the distribution')
+                            help='the mean of the distribution (-1e6-1e6)')
     parser_gau.add_argument('-s', '--standardDeviation', type=float,
-                            help='the standard deviation of the distribution',
+                            help='the standard deviation of the distribution \
+                                  (-1e6-1e6)',
                             default=stddev)
     parser_gau.add_argument('-d', '--significantDigits', type=int, metavar='N',
-                            default=significant, choices=range(2, 21),
-                            help='significant digits',)
+                            help='significant digits (2-20)',
+                            default=significant)
     parser_gau.set_defaults(which='gaussians')
 
     # Add string arguments
@@ -218,11 +271,10 @@ if __name__ == '__main__':
     chars = strings['characters']
     replacement = config.getboolean('string', 'replacement')
 
-    parser_str.add_argument('-l', '--length', type=int, choices=range(1, 21),
-                            default=length, help='length of strings',
-                            metavar='N')
+    parser_str.add_argument('-l', '--length', type=int, default=length,
+                            help='length of strings (1-20)', metavar='N')
     parser_str.add_argument('-c', '--characters', metavar='string', nargs='+',
-                            choices=ABCS.keys(), type=str, default=[chars],
+                            type=str, default=[chars], choices=ABCS.keys(),
                             help='allowed alphabet (max length 80)')
     parser_str.add_argument('-r', '--replacement', action='store_false',
                             default=replacement,
@@ -238,7 +290,7 @@ if __name__ == '__main__':
 
     parser_blo.add_argument('-s', '--size', type=int, default=size,
                             help='size of each blob measured in bits \
-                                  (range 1:1048576, must be divisble by 8)')
+                                  (1-1048576, must be divisble by 8)')
     parser_blo.add_argument('-f', '--format', type=str, default=form,
                             choices=BLOB_FORMATS, help='specifies blob return \
                             format')
