@@ -1,7 +1,7 @@
 RandomPy
 ========
 
-*RandomPy* is a commandline interface to the random.org JSON Signed API.  The
+RandomPy is a commandline interface to the random.org JSON Signed API.  The
 signature of every request is verified to make sure it comes from `random.org`.
 It is designed for use as a small utility and its output can easily piped into
 other applications or files.
