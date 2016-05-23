@@ -27,7 +27,7 @@ found below.
 
 Now simply run `python setup.py install` and you're set. Some examples:
 
-    $ randompy.py -n 5 integers
+    $ randompy -n 5 integers
 
     47
     97
@@ -35,11 +35,11 @@ Now simply run `python setup.py install` and you're set. Some examples:
     63
     45
 
-    $ randompy.py strings
+    $ randompy strings
 
     kneknvhy
 
-    $ randompy.py blobs -s 64 -f hex
+    $ randompy blobs -s 64 -f hex
 
     a2dcd5575d838933
 

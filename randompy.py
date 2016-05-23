@@ -11,6 +11,9 @@ import string
 import sys
 
 
+__version__ = '1.0.0'
+
+
 # Supported methods and related subparsers
 METHODS = {
     'integers': 'generateSignedIntegers',
@@ -192,14 +195,18 @@ def handle(config, **kwargs):
     print(output)
 
 
-if __name__ == '__main__':
+def get_config():
     config = configparser.ConfigParser()
     config.read('defaults.ini')
     try:
         config.read(os.path.expanduser(config['config']['path']))
     except:
         raise Exception('No user config found!')
+    return config
 
+
+def main():
+    config = get_config()
     parser = argparse.ArgumentParser(description='Get random numbers!')
     subparsers = parser.add_subparsers()
 
@@ -214,6 +221,8 @@ if __name__ == '__main__':
     # Every subparser needs this argument so it's for the parent parser.
     number = int(config['root']['number'])
 
+    parser.add_argument('--version', action='version', version='randompy {}'
+                        .format(__version__))
     parser.add_argument('-n', '--number', type=int, default=number,
                         help='number of randoms to generate')
 
