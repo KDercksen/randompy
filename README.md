@@ -6,6 +6,8 @@ signature of every request is verified to make sure it comes from `random.org`.
 It is designed for use as a small utility and its output can easily piped into
 other applications or files.
 
+![build status](https://travis-ci.org/KDercksen/randompy.svg)
+
 ### Usage
 
 The [API key](https://api.random.org/api-keys/beta) should be placed in
