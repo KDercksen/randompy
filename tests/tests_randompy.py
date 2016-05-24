@@ -1,14 +1,4 @@
-from randompy import RandomMockAPI, RandomPy
-
-
-class RandomPyMock(RandomPy):
-
-    def __init__(self, signed=True):
-        self.config = self._get_config()
-        self.key = 'mockkey'
-        self.signed = signed
-        self.fmt = 'Signed' if signed else ''
-        self.api = RandomMockAPI('url')
+from randompy import RandomPyMock
 
 
 class TestGenerateUnsigned:
