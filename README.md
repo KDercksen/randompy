@@ -76,7 +76,7 @@ For further details, see the documentation.
 #### Configuration file
 
 Default values for all available arguments can be specified in
-`~/.randompy.ini`. See `default.ini` as an example:
+`~/.randompy.ini`. See `defaults.ini` as an example:
 
 ```INI
 [config]
