@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from . import __version__
 from .randompy import RandomPy
 from io import StringIO
