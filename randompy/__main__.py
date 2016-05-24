@@ -45,10 +45,10 @@ def main():
     parser.add_argument('--version', action='version', version='randompy {}'
                         .format(__version__))
     parser.add_argument('-n', '--number', help='number of randoms to generate',
-                        type=int)
+                        type=int, default=1)
 
     # Add integer arguments
-    parser_int.add_argument('-m', '--min', type=int,
+    parser_int.add_argument('-m', '--min', type=int, action='store',
                             help='minimum of random numbers (-1e9-1e9)')
     parser_int.add_argument('-M', '--max', type=int,
                             help='maximum of random numbers (-1e9-1e9)')
@@ -86,7 +86,7 @@ def main():
     parser_str.set_defaults(method='strings')
 
     # Add uuids arguments
-    parser_uui.set_defaults(which='uuids')
+    parser_uui.set_defaults(method='uuids')
 
     # Add blobs arguments
     parser_blo.add_argument('-s', '--size', type=int, help='size of each blob \
@@ -101,7 +101,9 @@ def main():
     # If subparser was not supplied, print help; else call main
     if any(k in sys.argv for k in subparsers.choices.keys()):
         r = RandomPy()
-        r.generate(errorfunc=cli_error, successfunc=cli_success, **vars(args))
+        kwargs = {k: v for k, v in vars(args).items() if v is not None}
+        o = r.generate(errorfunc=cli_error, successfunc=cli_success, **kwargs)
+        print(o)
         sys.exit()
     else:
         parser.print_help()

@@ -3,8 +3,8 @@
 
 from .api import RandomAPI
 from configparser import ConfigParser
-from os.path import expanduser
 from random import randint
+import os
 import string
 
 
@@ -39,7 +39,7 @@ KEYS = {
     ),
     'strings': (
         ('length', int),
-        ('characters', int),
+        ('characters', str),
         ('replacement', bool),
     ),
     'uuids': (
@@ -134,9 +134,10 @@ class RandomPy:
 
     def _get_config(self):
         config = ConfigParser()
-        config.read('defaults.ini')
+        path = os.path.join(os.path.dirname(__file__), 'defaults.ini')
+        config.read(path)
         try:
-            config.read(expanduser(config['config']['path']))
+            config.read(os.path.expanduser(config['config']['path']))
         except:
             raise Exception('No user config found!')
         return config
@@ -155,9 +156,15 @@ class RandomPy:
         if kwargs['method'] != 'verify':
             req['params']['apiKey'] = self.key
             req['params']['n'] = kwargs['number']
+
+        # transform alphabet keywords into character string
         if method == 'strings':
-            s = ''.join(ABCS[c] for c in kwargs['characters'])
-            req['params']['characters'] = s
+            chars = kwargs['characters']
+            chars = [chars] if type(chars) is not list else chars
+            s = ''.join(ABCS[c] for c in chars)
+            kwargs['characters'] = s
+
+        # map value types over values
         for k, ktype in KEYS[method]:
             req['params'][k] = ktype(kwargs[k])
 
