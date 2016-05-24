@@ -8,7 +8,7 @@ Python object that you can use to query the API.
 
 - [Usage](#usage)
 - [Configuration file](#configuration file)
-- [Available CLI options](#available cli options)
+- [Available CLI options](#available-cli-options)
 - [TODO](#todo)
 
 ### Usage
