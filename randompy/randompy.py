@@ -71,14 +71,15 @@ ABCS = {
 
 class RandomPy:
 
-    def __init__(self, signed=True):
+    def __init__(self, key=None, signed=True):
         self.config = self._get_config()
-        self.key = self.config['config']['key']
         self.signed = signed
         self.fmt = 'Signed' if signed else ''
 
         url = self.config['config']['url']
         self.api = RandomAPI(url)
+
+        self.key = key if key is not None else self.config['config']['key']
 
     def integers(self, n, **kwargs):
         method = 'integers'
