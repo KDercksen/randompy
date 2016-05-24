@@ -6,4 +6,7 @@ python:
     - '3.5'
 install:
     - 'pip install -r requirements.txt'
-script: nosetests
+script:
+    nosetests --with-coverage
+after_succes:
+    coveralls
