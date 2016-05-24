@@ -47,6 +47,8 @@ def main():
 
     parser.add_argument('--version', action='version', version='randompy {}'
                         .format(__version__))
+    parser.add_argument('-S', '--signed', action='store_true', default=False,
+                        help='use signed API')
     parser.add_argument('-n', '--number', help='number of randoms to generate',
                         type=int, default=1)
 
@@ -103,7 +105,7 @@ def main():
 
     # If subparser was not supplied, print help; else call main
     if any(k in sys.argv for k in subparsers.choices.keys()):
-        r = RandomPy()
+        r = RandomPy(args.signed)
         kwargs = {k: v for k, v in vars(args).items() if v is not None}
         o = r.generate(errorfunc=cli_error, successfunc=cli_success, **kwargs)
         print(o)

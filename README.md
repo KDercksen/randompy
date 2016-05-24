@@ -118,11 +118,14 @@ overridden in the userconfig.
 
 #### Available CLI options
 
+- `-h, --help`: display help string.
+- `--version`: display installation version.
 - `-n, --number N`: number of random objects to generate. This should be
                     specified before any subparser. The maximum allowed numbers
                     for `uuids` and `blobs` are 1e3 and 1e2 respectively; for
                     the rest of the types, 1e4 numbers can be generated in a
                     single request. 
+- `-S, --signed`: use the signed API (verify response signatures).
 - `integers`
     - `-m, --min N`: minimum integer (between -1e9 and 1e9).
     - `-M, --max N`: maximum integer (between -1e9 and 1e9).
