@@ -6,6 +6,11 @@ Python object that you can use to query the API.
 
 ![build status](https://travis-ci.org/KDercksen/randompy.svg)
 
+- [Usage](#usage)
+- [Configuration file](#configuration file)
+- [Avaible CLI options](#available cli options)
+- [TODO](#todo)
+
 ### Usage
 
 The [API key](https://api.random.org/api-keys/beta) should be placed in
