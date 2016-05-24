@@ -158,3 +158,28 @@ class TestGenerateSigned:
         f = self.returnfunc
         req = self.r.blobs(4, errorfunc=f, successfunc=f)
         assert req['method'] == 'generateSignedBlobs'
+
+
+class TestHandleResponse:
+
+    def setup(self):
+        self.r = RandomPyMock()
+
+    def teardown(self):
+        self.r = None
+
+    def successfunc(self, resp):
+        return 'success'
+
+    def errorfunc(self, resp):
+        return 'error'
+
+    def test_handle_error(self):
+        resp = {'error': 42}
+        o = self.r._handle_response(resp, self.errorfunc, self.successfunc)
+        assert o == 'error'
+
+    def test_handle_success(self):
+        resp = {'result': 42}
+        o = self.r._handle_response(resp, self.errorfunc, self.successfunc)
+        assert o == 'success'
