@@ -18,6 +18,6 @@ setup(
     install_requires=[str(ir.req) for ir in install_reqs],
     packages=find_packages(exclude=['tests']),
     entry_points={
-        'console_scripts': ['randompy=randompy:main'],
+        'console_scripts': ['randompy=randompy.__main__:main'],
     },
 )
