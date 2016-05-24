@@ -1,10 +1,8 @@
 RandomPy
 ========
 
-RandomPy is a commandline interface to the random.org JSON Signed API.  The
-signature of every request is verified to make sure it comes from `random.org`.
-It is designed for use as a small utility and its output can easily piped into
-other applications or files.
+RandomPy is an interface to the `random.org` JSON API. It offers a CLI and a
+Python object that you can use to query the API.
 
 ![build status](https://travis-ci.org/KDercksen/randompy.svg)
 
@@ -27,7 +25,7 @@ key = abcdef01-2345-6789-abcd-ef0123456789
 Only the `key` value is required; all optional configuration values can be
 found below.
 
-Now simply run `python setup.py install` and you're set. Some examples:
+Now simply run `python setup.py install` and you're set. Some CLI examples:
 
     $ randompy -n 5 integers
 
@@ -45,7 +43,75 @@ Now simply run `python setup.py install` and you're set. Some examples:
 
     a2dcd5575d838933
 
-#### Available options
+And some use in Python code:
+
+```python
+from randompy import RandomPy
+
+# Use the signed API with response verification
+randSigned = RandomPy()
+
+# The below function returns the whole result JSON object by default.
+# You can specify keyword args `errorfunc` and `successfunc` with functions
+# that should handle the response as you want.
+result = randSigned.integers(10)
+
+# Use non-signed API
+rand = RandomPy(signed=False)
+
+def successfunc(resp):
+    return resp['random']['data']
+
+# Use default error handling (return error JSON object) and custom successfunc
+some_strings = rand.strings(20, successfunc=successfunc)
+```
+
+For further details, see the documentation.
+
+#### Configuration file
+
+Default values for all available arguments can be specified in
+`~/.randompy.ini`. See `default.ini` as an example:
+
+```INI
+[config]
+path = ~/.randompy.ini
+url = https://api.random.org/json-rpc/1/invoke
+
+[root]
+number = 1
+
+[integers]
+min = 0
+max = 100
+replacement = yes
+base = 10
+
+[decimals]
+decimalPlaces = 2
+replacement = yes
+
+[gaussians]
+mean = 20.0
+standardDeviation = 2.0
+significantDigits = 2
+
+[strings]
+length = 8
+characters = lower
+replacement = yes
+
+[uuids]
+
+[blobs]
+size = 128
+format = base64
+```
+
+You should not override the `url` and `path` values. All other values can be
+overridden in the userconfig.
+
+#### Available CLI options
 
 - `-n, --number N`: number of random objects to generate. This should be
                     specified before any subparser. The maximum allowed numbers
@@ -84,49 +150,8 @@ Now simply run `python setup.py install` and you're set. Some examples:
                     divisible by 8).
     - `-f, --format N`: blob output format (`base64` or `hex`).
 
-#### Configuration file
-
-Default values for all available arguments can be specified in
-`~/.randompy.ini`. See `default.ini` as an example:
-
-```INI
-[config]
-path = ~/.randompy.ini
-url = https://api.random.org/json-rpc/1/invoke
-
-[root]
-number = 1
-
-[integer]
-min = 0
-max = 100
-replacement = yes
-base = 10
-
-[decimal]
-decimalPlaces = 2
-replacement = yes
-
-[gaussian]
-mean = 20.0
-standardDeviation = 2.0
-significantDigits = 2
-
-[string]
-length = 8
-characters = lower
-replacement = yes
-
-[blob]
-size = 128
-format = base64
-```
-
-You should not override the `url` and `path` values. All other values can be
-overridden in the userconfig.
-
 ### TODO
 
-- Implement StdLib `random` port for use as library
+- Write module documentation
 - Implement requests for more than the max number allowed per API call
 - Write more (more robust) tests
