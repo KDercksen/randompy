@@ -5,10 +5,10 @@ from randompy import RandomAPI
 
 class TestRequestValidCheck:
 
-    def setUp(self):
+    def setup(self):
         self.randomapi = RandomAPI('url')
 
-    def tearDown(self):
+    def teardown(self):
         self.randomapi = None
 
     def test_valid_integers_correct(self):

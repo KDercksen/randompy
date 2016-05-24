@@ -83,3 +83,9 @@ class RandomAPI:
         params = req['params']
         results = {k: funcs[k](params[k]) for k in params if k in funcs}
         return results, all(results.values())
+
+
+class RandomMockAPI(RandomAPI):
+
+    def call(self, req):
+        return req
