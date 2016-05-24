@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from pip.req import parse_requirements
 from setuptools import find_packages, setup
