@@ -1,11 +1,20 @@
 from randompy import RandomMockAPI, RandomPy
 
 
+class RandomPyMock(RandomPy):
+
+    def __init__(self, signed=True):
+        self.config = self._get_config()
+        self.key = 'mockkey'
+        self.signed = signed
+        self.fmt = 'Signed' if signed else ''
+        self.api = RandomMockAPI('url')
+
+
 class TestGenerateUnsigned:
 
     def setup(self):
-        self.r = RandomPy(signed=False)
-        self.r.api = RandomMockAPI('url')
+        self.r = RandomPyMock(signed=False)
 
     def teardown(self):
         self.r = None
@@ -77,8 +86,7 @@ class TestGenerateUnsigned:
 class TestGenerateSigned:
 
     def setup(self):
-        self.r = RandomPy()
-        self.r.api = RandomMockAPI('url')
+        self.r = RandomPyMock()
 
         def verify(*args):
             return True
