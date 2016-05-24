@@ -4,8 +4,13 @@ RandomPy
 RandomPy is an interface to the `random.org` JSON API. It offers a CLI and a
 Python object that you can use to query the API.
 
-![build status](https://travis-ci.org/KDercksen/randompy.svg)
-![coverage status](https://coveralls.io/repos/github/KDercksen/randompy/badge.svg)
+`master`:
+![build status](https://travis-ci.org/KDercksen/randompy.svg?branch=master)
+![coverage status](https://coveralls.io/repos/github/KDercksen/randompy/badge.svg?branch=master)
+
+`develop`:
+![build status](https://travis-ci.org/KDercksen/randompy.svg?branch=develop)
+![coverage status](https://coveralls.io/repos/github/KDercksen/randompy/badge.svg?branch=develop)
 
 - [Usage](#usage)
 - [Configuration file](#configuration file)
