@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .randompy import RandomPy, RandomPyMock
-from .api import RandomAPI, RandomMockAPI
+from .randompy import RandomPy
+from .api import RandomAPI
 
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 
 
 __all__ = [
     'RandomPy',
-    'RandomPyMock',
     'RandomAPI',
-    'RandomMockAPI',
 ]

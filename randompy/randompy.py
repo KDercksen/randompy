@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .api import RandomAPI, RandomMockAPI
+from .api import RandomAPI
 from .functions import error_all, result_all
 from configparser import ConfigParser
 from random import randint
@@ -189,13 +189,3 @@ class RandomPy:
 
     def _handle_response(self, resp, errorfunc, successfunc):
         return errorfunc(resp) if 'error' in resp else successfunc(resp)
-
-
-class RandomPyMock(RandomPy):
-
-    def __init__(self, signed=True):
-        self.config = self._get_config()
-        self.key = 'mockkey'
-        self.signed = signed
-        self.fmt = 'Signed' if signed else ''
-        self.api = RandomMockAPI('url')

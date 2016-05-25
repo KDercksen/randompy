@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from nose.tools import assert_raises
 from randompy import RandomAPI
+from unittest.mock import patch
 
 
 class TestRequestValidCheck:
@@ -73,3 +75,21 @@ class TestRequestValidCheck:
         req = {'method': 'generateBlobs',
                'params': {'n': 40, 'size': 68, 'format': 'hex'}}
         assert not self.randomapi.valid(req)[1]
+
+
+class TestCall:
+
+    def setup(self):
+        self.randomapi = RandomAPI('url')
+
+    def teardown(self):
+        self.randomapi = None
+
+    def test_exception(self):
+        req = {'method': 'generateIntegers', 'params': {'n': -1}}
+        assert_raises(Exception, RandomAPI.call, req)
+
+    @patch.object(RandomAPI, '_post', return_value=True)
+    def test_correct(self, mock_post):
+        req = {'method': 'generateIntegers', 'params': {'n': 1}}
+        assert self.randomapi.call(req)

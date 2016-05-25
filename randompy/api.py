@@ -75,7 +75,7 @@ class RandomAPI:
             raise Exception('Argument constraints violated: {}'.format(
                             ', '.join(k for k in v[0] if v[0][k] is False)))
         else:
-            return post(self.url, json=req, headers=self.headers).json()
+            return self._post(req)
 
     def valid(self, req):
         alias = ALIAS[req['method']]
@@ -84,8 +84,5 @@ class RandomAPI:
         results = {k: funcs[k](params[k]) for k in params if k in funcs}
         return results, all(results.values())
 
-
-class RandomMockAPI(RandomAPI):
-
-    def call(self, req):
-        return req
+    def _post(self, req):
+        return post(self.url, json=req, headers=self.headers).json()
