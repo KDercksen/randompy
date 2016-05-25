@@ -44,6 +44,11 @@ class TestFunctions:
     def test_result_requests_left(self):
         assert f.result_requests_left(self.resp) == 3
 
+    def test_error_all(self):
+        result = f.error_all(self.resp)
+        k = (key for key in self.resp['error'])
+        assert all(key in k for key in result)
+
     def test_error_message(self):
         assert f.error_message(self.resp) == 'Error with code -1'
 

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .api import RandomAPI, RandomMockAPI
+from .functions import error_all, result_all
 from configparser import ConfigParser
 from random import randint
 import os
@@ -122,14 +123,12 @@ class RandomPy:
         if 'errorfunc' in kwargs:
             errorfunc = kwargs['errorfunc']
         else:
-            def errorfunc(resp):
-                return resp['error']
+            errorfunc = error_all
 
         if 'successfunc' in kwargs:
             successfunc = kwargs['successfunc']
         else:
-            def successfunc(resp):
-                return resp['result']
+            successfunc = result_all
 
         return self._handle_response(resp, errorfunc, successfunc)
 

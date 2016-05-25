@@ -26,6 +26,10 @@ def result_requests_left(resp):
     return resp['result']['requestsLeft']
 
 
+def error_all(resp):
+    return resp['error']
+
+
 def error_message(resp):
     return resp['error']['message']
 
