@@ -1,4 +1,7 @@
-[report]
+[run]
+source = randompy
 omit =
+    tests/*
+    randompy/__main__.py
     */python?.?/*
     */site-packages/nose/*
