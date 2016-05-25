@@ -18,6 +18,7 @@ METHODS = {
     'uuids': 'generate{}UUIDs',
     'blobs': 'generate{}Blobs',
     'verify': 'verifySignature',
+    'usage': 'getUsage',
 }
 
 
@@ -52,6 +53,8 @@ KEYS = {
     'verify': (
         ('random', lambda x: x),
         ('signature', str),
+    ),
+    'usage': (
     ),
 }
 
@@ -106,6 +109,10 @@ class RandomPy:
         method = 'blobs'
         return self.generate(number=n, method=method, **kwargs)
 
+    def usage(self, **kwargs):
+        method = 'usage'
+        return self.generate(method=method, **kwargs)
+
     def generate(self, **kwargs):
         method = kwargs['method']
         keys = (x[0] for x in KEYS[method])
@@ -117,7 +124,8 @@ class RandomPy:
         if not rID == resp['id']:
             raise Exception('Response ID did not match request ID!')
 
-        if self.signed and not self._verify_response(resp):
+        if self.signed and method != 'usage' \
+                and not self._verify_response(resp):
             raise Exception('Response could not be verified!')
 
         if 'errorfunc' in kwargs:
@@ -155,6 +163,7 @@ class RandomPy:
 
         if kwargs['method'] != 'verify':
             req['params']['apiKey'] = self.key
+        if kwargs['method'] != 'usage':
             req['params']['n'] = kwargs['number']
 
         # transform alphabet keywords into character string

@@ -37,6 +37,8 @@ CONSTRAINTS = {
     },
     'verify': {
     },
+    'usage': {
+    }
 }
 
 
@@ -54,6 +56,7 @@ ALIAS = {
     'generateBlobs': 'blobs',
     'generateSignedBlobs': 'blobs',
     'verifySignature': 'verify',
+    'getUsage': 'usage',
 }
 
 

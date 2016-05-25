@@ -32,6 +32,17 @@ def cli_success(resp):
     return output
 
 
+def cli_usage(resp):
+    data = resp['result']
+    msg = StringIO()
+    msg.write('Status: {}\n'.format(data['status']))
+    msg.write('Requests left: {}\n'.format(data['requestsLeft']))
+    msg.write('Bits left: {}'.format(data['bitsLeft']))
+    output = msg.getvalue()
+    msg.close()
+    return output
+
+
 def main():
     '''Console script entrypoint.'''
     parser = argparse.ArgumentParser(description='Get random numbers!')
@@ -44,6 +55,7 @@ def main():
     parser_str = subparsers.add_parser('strings')
     parser_uui = subparsers.add_parser('uuids')
     parser_blo = subparsers.add_parser('blobs')
+    parser_use = subparsers.add_parser('usage')
 
     parser.add_argument('--version', action='version', version='randompy {}'
                         .format(__version__))
@@ -101,13 +113,21 @@ def main():
                             return format')
     parser_blo.set_defaults(method='blobs')
 
+    # Add usage arguments
+    parser_use.set_defaults(method='usage')
+
     args = parser.parse_args()
 
     # If subparser was not supplied, print help; else call main
     if any(k in sys.argv for k in subparsers.choices.keys()):
-        r = RandomPy(args.signed)
+        r = RandomPy(signed=args.signed)
         kwargs = {k: v for k, v in vars(args).items() if v is not None}
-        o = r.generate(errorfunc=cli_error, successfunc=cli_success, **kwargs)
+        if kwargs['method'] == 'usage':
+            successfunc = cli_usage
+        else:
+            successfunc = cli_success
+
+        o = r.generate(errorfunc=cli_error, successfunc=successfunc, **kwargs)
         print(o)
         sys.exit()
     else:

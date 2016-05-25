@@ -5,6 +5,26 @@ from randompy import RandomAPI, RandomPy
 from unittest.mock import MagicMock, patch
 
 
+class TestUsage:
+
+    def setup(self):
+        self.r = RandomPy(key='key', signed=False)
+        self.f = lambda x: x
+        self.patcher = patch.object(RandomAPI, '_post', side_effect=self.f)
+        self.patcher.start()
+
+    def teardown(self):
+        self.r = None
+        self.patcher.stop()
+
+    def test_usage(self):
+        req = self.r.usage(errorfunc=self.f, successfunc=self.f)
+        assert (
+            req['method'] == 'getUsage' and
+            req['params']['apiKey'] == 'key'
+        )
+
+
 class TestGenerateUnsigned:
 
     def setup(self):
