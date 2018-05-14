@@ -10,7 +10,7 @@ master | develop
 ![coverage status](https://coveralls.io/repos/github/KDercksen/randompy/badge.svg?branch=master) | ![coverage status](https://coveralls.io/repos/github/KDercksen/randompy/badge.svg?branch=develop)
 
 - [Usage](#usage)
-- [Configuration file](#configuration file)
+- [Configuration file](#configuration-file)
 - [Available CLI options](#available-cli-options)
 - [TODO](#todo)
 
